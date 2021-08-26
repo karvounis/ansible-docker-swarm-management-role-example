@@ -1,0 +1,22 @@
+pip_dependencies:
+  - name: jsondiff
+  - name: pyyaml
+
+docker_secrets:
+  - name: admin_password
+    data: password!231!
+    state: present
+  - name: admin_password_b64
+    data: cGFzc3dvcmQhMjMxIQ==
+    data_is_b64: true
+    state: present
+docker_volumes:
+  - name: example_data
+  - name: old_example_data
+    state: absent
+docker_networks:
+  - name: example_network
+    state: present
+    scope: swarm
+  - name: old_example_network
+    state: absent

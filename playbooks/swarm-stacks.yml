@@ -1,0 +1,6 @@
+---
+- name: Docker swarm management example playbook
+  hosts: all
+  gather_facts: false
+  roles:
+    - karvounis.docker_swarm_management

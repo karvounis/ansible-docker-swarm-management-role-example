@@ -1,0 +1,6 @@
+---
+collections:
+  - name: community.docker
+roles:
+  - name: karvounis.docker_swarm_management
+    version: 1.0.1
