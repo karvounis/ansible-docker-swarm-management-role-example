@@ -1,0 +1,14 @@
+healthcheck_endpoint: /service_three/status
+grpc:
+  addr: service_three:50051
+  keep_alive:
+    client_parameters:
+      time: "2m"
+      timeout: "20s"
+      permit_without_stream: true
+gateway_port: 8080
+prometheus:
+  endpoint: "/service_three/metrics"
+  addr: ":2112"
+status:
+  port: 10000

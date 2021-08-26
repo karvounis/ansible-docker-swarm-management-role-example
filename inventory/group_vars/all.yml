@@ -20,3 +20,27 @@ docker_networks:
     scope: swarm
   - name: old_example_network
     state: absent
+docker_configs:
+  - name: example_config_one
+    data: |
+      mongo:
+        dsn: mongodb://admin:password@mymongo.dev/admin
+        database_name: db
+      health-check-endpoint: /healthcheck
+      service-port: 9999
+  - name: example_config_two
+    data: "{{ lookup('template', '{{ playbook_dir }}/../templates/configs/example_config_two.yml') }}"
+  - name: example_config_three
+    data: "{{ lookup('file', '{{ playbook_dir }}/../templates/configs/example_config_three.yml') | b64encode }}"
+    data_is_b64: true
+  - name: example_config_four
+    data: "{{ lookup('template', '{{ playbook_dir }}/../templates/configs/example_config_four.yml.j2') }}"
+
+config_four:
+  healthcheck_endpoint: /service_four/status
+  grpc:
+    addr: service_four:50051
+  gateway_port: 8776
+  prometheus:
+    endpoint: /service_four/metrics
+    addr: :2114

@@ -1,0 +1,14 @@
+healthcheck_endpoint: {{ config_four.healthcheck_endpoint }}
+grpc:
+  addr: {{ config_four.grpc.addr }}
+  keep_alive:
+    client_parameters:
+      time: "2m"
+      timeout: "20s"
+      permit_without_stream: true
+gateway_port: {{ config_four.gateway_port }}
+prometheus:
+  endpoint: "{{ config_four.prometheus.endpoint }}"
+  addr: "{{ config_four.prometheus.addr }}"
+status:
+  port: 10000
