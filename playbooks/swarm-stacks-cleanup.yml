@@ -1,0 +1,37 @@
+---
+- name: Docker swarm management cleanup playbook
+  hosts: all
+  gather_facts: false
+  roles:
+    - karvounis.docker_swarm_management
+  vars:
+    docker_secrets:
+      - name: example_secret_mysql
+        data: ''
+        state: absent
+      - name: example_secret_postgres
+        data: ''
+        state: absent
+    docker_volumes:
+      - name: example_data_mysql
+        state: absent
+      - name: example_data_postgres
+        state: absent
+    docker_networks:
+      - name: example_network_mysql
+        state: absent
+      - name: example_network_postgres
+        state: absent
+    docker_configs:
+      - name: example_config_one
+        data: ''
+        state: absent
+      - name: example_config_two
+        data: ''
+        state: absent
+      - name: example_config_three
+        data: ''
+        state: absent
+      - name: example_config_four
+        data: ''
+        state: absent
