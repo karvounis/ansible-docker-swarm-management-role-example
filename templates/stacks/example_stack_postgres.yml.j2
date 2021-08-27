@@ -1,0 +1,44 @@
+---
+version: "3.4"
+
+networks:
+  # Created already by Ansible
+  example_network_postgres:
+    external: true
+
+volumes:
+  # Created already by Ansible
+  example_data_postgres:
+    external: true
+
+secrets:
+  # Created already by Ansible
+  example_secret_postgres:
+    external: true
+
+services:
+  postgres_db:
+    image: postgres:{{ example_stack_postgres.postgres_db.version | default('13.4') }}
+    restart: always
+    environment:
+      POSTGRES_USER: {{ example_stack_postgres.postgres_db.username }}
+      POSTGRES_PASSWORD_FILE: /run/secrets/example_secret_postgres
+    volumes:
+      - example_data_postgres:/var/lib/postgresql/data
+    networks:
+      - example_network_postgres
+    secrets:
+      - example_secret_postgres
+    deploy:
+      mode: replicated
+      replicas: 1
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "{{ example_stack_postgres.adminer.port }}:8080"
+    networks:
+      - example_network_postgres
+    deploy:
+      mode: replicated
+      replicas: {{ example_stack_postgres.adminer.replicas | default(1) }}

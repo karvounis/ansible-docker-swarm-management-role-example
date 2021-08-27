@@ -1,39 +1,61 @@
-pip_dependencies:
-  - name: jsondiff
-  - name: pyyaml
-
+---
 docker_secrets:
-  - name: admin_password
+  # Plaintext secret. You can use Ansible vault to hide this value
+  - name: example_secret_mysql
     data: password!231!
     state: present
     labels:
       bar: baz
-      one: '1'
-  - name: admin_password_b64
+      one: "1"
+  # Base64 encoded secret
+  - name: example_secret_postgres
     data: cGFzc3dvcmQhMjMxIQ==
     data_is_b64: true
     state: present
+
 docker_volumes:
-  - name: example_data
-  - name: example_data_two
+  # Simple volume
+  - name: example_data_mysql
+  # Labelled volume
+  - name: example_data_postgres
     labels:
       key1: value1
       key2: value2
-  - name: old_example_data
-    state: absent
+
 docker_networks:
-  - name: example_network
+  # Simple overlay/swarm volume
+  - name: example_network_mysql
     state: present
     scope: swarm
-  - name: example_network_two
+  # Labelled overlay/swarm volume
+  - name: example_network_postgres
     state: present
     scope: swarm
     labels:
       key1: value1
       key2: value2
-  - name: old_example_network
-    state: absent
+
+docker_stacks:
+  - name: example_stack_mysql
+    # Simple docker-compose yaml file
+    compose: "{{ playbook_dir }}/../templates/stacks/example_stack_mysql.yml"
+    state: present
+  - name: example_stack_postgres
+    compose:
+      # Jinja2 template file
+      - "{{ lookup('template', '{{ playbook_dir }}/../templates/stacks/example_stack_postgres.yml.j2') | from_yaml }}"
+    state: present
+
+# This variable object is being used to populate the templates/stacks/example_stack_postgres.yml.j2 template file
+example_stack_postgres:
+  postgres_db:
+    version: 13.4
+    username: homer
+  adminer:
+    port: 9999
+
 docker_configs:
+  # Simple inline config
   - name: example_config_one
     data: |
       mongo:
@@ -41,18 +63,22 @@ docker_configs:
         database_name: db
       health-check-endpoint: /healthcheck
       service-port: 9999
+  # Simple infile config
   - name: example_config_two
     data: "{{ lookup('template', '{{ playbook_dir }}/../templates/configs/example_config_two.yml') }}"
     labels:
       bar: baz
-      one: '1'
-      two: '2'
+      one: "1"
+      two: "2"
+  # Example with Base64 encoded config
   - name: example_config_three
     data: "{{ lookup('file', '{{ playbook_dir }}/../templates/configs/example_config_three.yml') | b64encode }}"
     data_is_b64: true
+  # Example with config generated from a Jinja2 template file
   - name: example_config_four
     data: "{{ lookup('template', '{{ playbook_dir }}/../templates/configs/example_config_four.yml.j2') }}"
 
+# This variable object is being used to populate the templates/configs/example_config_four.yml.j2 template file
 config_four:
   healthcheck_endpoint: /service_four/status
   grpc:

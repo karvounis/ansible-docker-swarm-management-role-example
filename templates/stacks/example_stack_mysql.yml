@@ -1,0 +1,44 @@
+---
+version: "3.4"
+
+networks:
+  # Created already by Ansible
+  example_network_mysql:
+    external: true
+
+volumes:
+  # Created already by Ansible
+  example_data_mysql:
+    external: true
+
+secrets:
+  # Created already by Ansible
+  example_secret_mysql:
+    external: true
+
+services:
+  mysql_db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/example_secret_mysql
+    volumes:
+      - example_data_mysql:/var/lib/mysql
+    networks:
+      - example_network_mysql
+    secrets:
+      - example_secret_mysql
+    deploy:
+      mode: replicated
+      replicas: 1
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 7777:8080
+    networks:
+      - example_network_mysql
+    deploy:
+      mode: replicated
+      replicas: 1
